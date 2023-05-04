@@ -1,7 +1,8 @@
-name: cellprofiler4_omero
+name: cellprofiler4
 
 channels:
 - defaults
+- ome
 - anaconda
 - conda-forge
 - bioconda
@@ -10,6 +11,8 @@ dependencies:
 - python=3.8
 - pip
 - omero-py
+- jupyter
+- javabridge
 - h5py
 #- cudatoolkit=11.8.0
 - matplotlib
@@ -22,7 +25,7 @@ dependencies:
 - scipy
 - six
 - mahotas
-#- gtk2
+- gtk2
 - Jinja2=3.0.1
 - inflect=5.3.0
 #- wxpython=4.1.0
@@ -32,6 +35,7 @@ dependencies:
     - ome-zarr
     - numpy
     - cellprofiler==4.2.4
+    - ezomero
 #    - cellpose==2.1.0
 #    - stardist
 #    - csbdeep
