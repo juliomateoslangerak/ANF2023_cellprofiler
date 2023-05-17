@@ -35,7 +35,7 @@ dependencies:
 - pip:
     - ome-zarr
     - numpy
-    - cellprofiler==4.2.4
+    - cellprofiler==4.2.5
     - ezomero
     - omero-rois
 #    - cellpose==2.1.0
