@@ -38,6 +38,10 @@ dependencies:
     - cellprofiler==4.2.5
     - ezomero
     - omero-rois
+    - omero-upload
+    - omero-metadata
+    - omero-cli-duplicate
+    - omero-marshal
 #    - cellpose==2.1.0
 #    - stardist
 #    - csbdeep
