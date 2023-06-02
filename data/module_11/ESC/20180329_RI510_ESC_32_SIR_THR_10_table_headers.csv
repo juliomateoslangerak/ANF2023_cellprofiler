@@ -1,0 +1,4 @@
+# header s,l,s,l,l,l,d,d,d,d,d,d,d,d,d,d,d,d,d,d,s,s,roi
+Image Name,Channel ID,roi_type,label,area,filled_area,major_axis_length,centroid-0,centroid-1,centroid-2,weighted_centroid-0,weighted_centroid-1,weighted_centroid-2,equivalent_diameter,max_intensity,mean_intensity,min_intensity,sphericity,solidity,volume,volume_units,Roi Name,roi
+20180329_RI510_ESC_32_SIR_THR_10.ome.tiff,0,domain,1,481,481,12.172395679084664,11.515592515592516,28.1995841995842,26.565488565488565,11.703972260802942,28.156448835818203,26.53396110653605,9.721101656163937,22962.0,8118.985446985447,3635.0,0.7001238162459263,0.8043478260869565,0.0962,micron^3,ch-0_domain_label-1,135864
+20180329_RI510_ESC_32_SIR_THR_10.ome.tiff,0,subdomain,2,481,481,12.172395679084664,11.515592515592516,28.1995841995842,26.565488565488565,11.703972260802942,28.156448835818203,26.53396110653605,,22962.0,8118.985446985447,3635.0,,,0.0962,micron^3,ch-0_subdomain_label-2,135865

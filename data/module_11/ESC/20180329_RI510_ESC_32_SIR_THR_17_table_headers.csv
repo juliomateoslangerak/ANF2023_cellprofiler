@@ -1,0 +1,2 @@
+# header s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,roi
+Image Name,Channel ID,roi_type,label,area,filled_area,major_axis_length,centroid-0,centroid-1,centroid-2,weighted_centroid-0,weighted_centroid-1,weighted_centroid-2,equivalent_diameter,max_intensity,mean_intensity,min_intensity,sphericity,solidity,volume,volume_units,Roi Name,roi
