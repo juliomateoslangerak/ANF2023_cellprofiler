@@ -41,7 +41,7 @@ dependencies:
     - omero-upload
     - omero-metadata
     - omero-cli-duplicate
-    - omero-marshal
+#    - omero-marshal
 #    - cellpose==2.1.0
 #    - stardist
 #    - csbdeep
