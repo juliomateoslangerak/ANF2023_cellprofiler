@@ -1,9 +1,9 @@
-name: cellprofiler4
+name: cellprofiler-core425
 
 channels:
 - ome
-- bioconda
 - conda-forge
+- bioconda
 - anaconda
 - defaults
 
@@ -12,30 +12,34 @@ dependencies:
 - pip
 - omero-py
 - jupyter
-- javabridge
+#- javabridge
 - h5py
 #- cudatoolkit=11.8.0
 - matplotlib
-- pandas
+#- pandas
 #- mysqlclient
-- openjdk
+#- openjdk
 - imageio
-- scikit-learn
+#- scikit-learn
 - scikit-image
 - scipy
-- six
-- mahotas
-- gtk2
-- Jinja2=3.0.1
-- inflect=5.3.0
-- wxpython=4.1.0
-- centrosome
+- scyjava
+#- six
+#- mahotas
+#- gtk2
+#- Jinja2=3.0.1
+#- inflect=5.3.0
+#- wxpython=4.1.0
+#- centrosome
 #- mysqlclient=1.4.4
 #- sentry-sdk=0.18.0
 - pip:
+    - centrosome
     - ome-zarr
     - numpy
-    - cellprofiler==4.2.5
+    - pandas
+    - cellprofiler-core==4.2.5
+#    - cellprofiler==4.2.5
     - ezomero
     - omero-rois
     - omero-upload
