@@ -62,13 +62,13 @@ COLUMN_TYPES = {'string': grid.StringColumn,
                 }
 
 def run_cp_pipeline(conn: gw,
-                    dataset_id: tempfile.TemporaryDirectory,
+                    dataset_id: int,
                     objects_to_image_table: str = None,
                     objects_to_mask: iter = None,
                     objects_to_point: iter = None,
                     link_to_project: bool = False,
-                    output_dir: str = None,
-                    input_dir: str = None):
+                    output_dir: tempfile.TemporaryDirectory = None,
+                    input_dir: tempfile.TemporaryDirectory = None):
 
     file_ann_ids = ezomero.get_file_annotation_ids(conn, "Dataset", dataset_id)
     for file_ann_id in file_ann_ids:
