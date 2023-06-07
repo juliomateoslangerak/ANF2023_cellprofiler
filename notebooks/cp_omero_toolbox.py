@@ -66,7 +66,7 @@ def run_cp_pipeline(conn: gw,
                     objects_to_image_table: str = None,
                     objects_to_mask: iter = None,
                     objects_to_point: iter = None,
-                    link_to_project: bool = False,
+                    link_to_project: bool = True,
                     output_dir: tempfile.TemporaryDirectory = None,
                     input_dir: tempfile.TemporaryDirectory = None):
 
