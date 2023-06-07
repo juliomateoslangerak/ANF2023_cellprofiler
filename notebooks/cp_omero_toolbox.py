@@ -1,3 +1,5 @@
+import tempfile
+
 import omero.gateway as gw
 from omero import model
 from omero.model import enums, LengthI, MaskI, RoiI
@@ -56,13 +58,14 @@ COLUMN_TYPES = {'string': grid.StringColumn,
                 'file': grid.FileColumn,
                 }
 
-def run_cp_pipeline(conn:gw,
-                    dataset_id:int,
-                    objects_to_image_table:str = None,
-                    objects_to_mask:iter = None,
-                    objects_to_point:iter = None,
-                    link_to_project:bool = False,
-                    output_dir:str = None):
+def run_cp_pipeline(conn: gw,
+                    dataset_id: tempfile.TemporaryDirectory,
+                    objects_to_image_table: str = None,
+                    objects_to_mask: iter = None,
+                    objects_to_point: iter = None,
+                    link_to_project: bool = False,
+                    output_dir: str = None,
+                    input_dir: str = None):
 
     file_ann_ids = ezomero.get_file_annotation_ids(conn, "Dataset", dataset_id)
     for file_ann_id in file_ann_ids:
@@ -109,7 +112,8 @@ def run_cp_pipeline(conn:gw,
         measurements = pipeline_copy.run()
 
         for object_name, _ in measurement_dfs.items():
-            if object_name == "Experiment": continue  # TODO: put this into description or comment
+            if object_name == "Experiment":
+                continue  # TODO: put this into description or comment
 
             data = {feature: measurements.get_measurement(object_name, feature) for feature in
                     measurements.get_feature_names(object_name)}
