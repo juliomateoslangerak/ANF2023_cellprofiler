@@ -35,8 +35,8 @@ dependencies:
 #- sentry-sdk=0.18.0
 - pip:
 #    - centrosome
-    - ome-zarr
-    - ome-cli-zarr
+#    - ome-zarr
+#    - ome-cli-zarr
     - numpy
     - pandas
 #    - cellprofiler-core==4.2.5
