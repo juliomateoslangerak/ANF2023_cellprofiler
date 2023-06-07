@@ -11,6 +11,9 @@ import omero_rois
 from omero.gateway import ColorHolder
 from omero.rtypes import rstring, rdouble, rint
 
+import cellprofiler_core.preferences as cp_preferences
+cp_preferences.set_headless()
+
 import cellprofiler_core.pipeline as cp_pipeline
 import cellprofiler_core.measurement as cp_measurement
 from cellprofiler_core.modules.injectimage import InjectImage
