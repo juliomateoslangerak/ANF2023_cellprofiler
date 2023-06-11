@@ -23,7 +23,6 @@ dependencies:
 - pip:
     - numpy
     - pandas
-#    - cellprofiler-core==4.2.5
     - cellprofiler==4.2.5
     - ezomero
     - omero-rois
