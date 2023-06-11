@@ -11,7 +11,8 @@ dependencies:
 - python=3.8
 - pip
 - omero-py
-- jupyter
+#- jupyter
+- jupyterlab
 - h5py
 - matplotlib
 - imageio
