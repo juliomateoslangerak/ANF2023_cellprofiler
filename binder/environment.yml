@@ -12,7 +12,8 @@ dependencies:
 - pip
 - omero-py
 #- jupyter
-- jupyterlab
+# - jupyterlab
+- nb_conda
 - h5py
 - matplotlib
 - imageio
