@@ -1,1 +1,2 @@
 libmysqlclient-dev
+openjdk-18-jdk
