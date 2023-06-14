@@ -23,6 +23,7 @@ import ezomero
 import numpy as np
 import pandas as pd
 
+
 DTYPES_NP_TO_OMERO = {'int8': enums.PixelsTypeint8,
                       'int16': enums.PixelsTypeint16,
                       'uint16': enums.PixelsTypeuint16,
@@ -60,6 +61,7 @@ COLUMN_TYPES = {'string': grid.StringColumn,
                 'mask': grid.MaskColumn,
                 'file': grid.FileColumn,
                 }
+
 
 def run_cp_pipeline(conn: gw,
                     dataset_id: int,
@@ -104,6 +106,8 @@ def run_cp_pipeline(conn: gw,
     # Let's collect all images in a dataset and feed them one at a time into the pipeline.
     for image_id in image_ids:
         image, image_pixels = ezomero.get_image(conn, image_id)
+
+        print(f"Processing image {image.getName()}")
 
         pipeline_copy = pipeline.copy()
 
@@ -190,6 +194,7 @@ def run_cp_pipeline(conn: gw,
         link_annotation(dataset, images_table)
 
     return measurement_dfs
+
 
 def create_roi(conn, img, shapes, name):
     updateService = conn.getUpdateService()
