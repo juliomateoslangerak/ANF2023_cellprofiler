@@ -1,0 +1,20 @@
+---
+title: "My Project"
+format: gfm
+jupyter: python3
+---
+
+This is a GitHub README that has content dynamically generated from Python:
+    
+```{python}
+1 + 1
+```
+
+
+### Objectifs
+L'objectif de ce projet est de construire un document guide pour le nommage des fichiers image et leur en cheminement dans le système de fichiers d'un ordimateur.
+
+
+### References
+https://anfdonnees2016.sciencesconf.org/data/pages/2016_07_07_ANF_Renatis_Formats_Standards_et_Metadonnees_1.pdf
+https://www.ed.ac.uk/records-management/guidance/records/practical-guidance/naming-conventions
