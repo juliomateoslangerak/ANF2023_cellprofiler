@@ -63,32 +63,77 @@ COLUMN_TYPES = {'string': grid.StringColumn,
                 }
 
 
-def run_cp_pipeline(conn: gw,
-                    dataset_id: int,
-                    objects_to_image_table: str = None,
-                    objects_to_mask: iter = None,
-                    objects_to_point: iter = None,
-                    link_to_project: bool = True,
-                    output_dir: tempfile.TemporaryDirectory = None,
-                    input_dir: tempfile.TemporaryDirectory = None):
+def run_project_cp_pipeline(
+        conn: gw,
+        project_id: int,
+        objects_to_image_table: str = None,
+        objects_to_mask: iter = None,
+        objects_to_point: iter = None,
+        link_to_project: bool = True,
+        link_to_dataset: bool = False,
+        populate_key_value_pairs: bool = True,
+        output_dir: tempfile.TemporaryDirectory = None,
+        input_dir: tempfile.TemporaryDirectory = None
+):
+    dataset_ids = ezomero.get_dataset_ids(conn, project_id)
+
+    project_df = pd.DataFrame()
+
+    for dataset_id in dataset_ids:
+        dataset_df = run_dataset_cp_pipeline(
+            conn=conn,
+            dataset_id=dataset_id,
+            objects_to_image_table=objects_to_image_table,
+            objects_to_mask=objects_to_mask,
+            objects_to_point=objects_to_point,
+            link_to_project=False,
+            link_to_dataset=link_to_dataset,
+            populate_key_value_pairs=populate_key_value_pairs,
+            output_dir=output_dir,
+            input_dir=input_dir
+        )
+
+        project_df = pd.concat([project_df, dataset_df], ignore_index=True)
+
+    if link_to_project:
+        project = conn.getObject("Project", project_id)
+        project_table = create_annotation_table(
+            conn, "project_table",
+            column_names=project_df.columns.tolist(),
+            column_descriptions=project_df.columns.tolist(),
+            values=[project_df[c].values.tolist() for c in
+                    project_df.columns],
+            types=None,
+            namespace="CellProfiler_v4.2.5",
+            table_description="project_table"
+       )
+        link_annotation(project, project_table)
+
+
+def run_dataset_cp_pipeline(
+    conn: gw,
+    dataset_id: int,
+    objects_to_image_table: str = None,
+    objects_to_mask: iter = None,
+    objects_to_point: iter = None,
+    link_to_project: bool = True,
+    link_to_dataset: bool = True,
+    populate_key_value_pairs: bool = True,
+    output_dir: tempfile.TemporaryDirectory = None,
+    input_dir: tempfile.TemporaryDirectory = None
+):
 
     file_ann_ids = ezomero.get_file_annotation_ids(conn, "Dataset", dataset_id)
     for file_ann_id in file_ann_ids:
         if conn.getObject("FileAnnotation", file_ann_id).getFile().getName().endswith(".cppipe"):
             cp_pipeline_path = ezomero.get_file_annotation(conn, file_ann_id, input_dir.name)
-            print(f"Downloaded {cp_pipeline_path}")
             break
 
     pipeline = cp_pipeline.Pipeline()
     pipeline.load(cp_pipeline_path)
 
-    for i in range(4):
-        print('Remove module: ', pipeline.modules()[0].module_name)
+    for _ in range(4):
         pipeline.remove_module(1)
-
-    print('Pipeline modules:')
-    for module in pipeline.modules(False):
-        print(module.module_num, module.module_name)
 
     measurement_dfs = {}
     for column in pipeline.get_measurement_columns():
@@ -97,9 +142,27 @@ def run_cp_pipeline(conn: gw,
 
     # Get the ids of the images we want to analyze
     dataset = conn.getObject("Dataset", dataset_id)
+    print(f"Processing dataset {dataset.getName()}")
+
     image_ids = ezomero.get_image_ids(conn=conn, dataset=dataset_id, across_groups=False)
 
+    key_value_pairs = {}
+    if populate_key_value_pairs:
+        key_values_ids = ezomero.get_map_annotation_ids(
+            conn,
+            "Dataset",
+            dataset_id)
+        for key_value_id in key_values_ids:
+            key_value_pairs.update(ezomero.get_map_annotation(
+                conn,
+                key_value_id)
+            )
+
     # Remove duplicates
+    if objects_to_mask is None:
+        objects_to_mask = []
+    if objects_to_point is None:
+        objects_to_point = []
     objects_to_mask = set(objects_to_mask)
     objects_to_point = set(objects_to_point)
 
@@ -107,7 +170,7 @@ def run_cp_pipeline(conn: gw,
     for image_id in image_ids:
         image, image_pixels = ezomero.get_image(conn, image_id)
 
-        print(f"Processing image {image.getName()}")
+        print(f"    - image {image.getName()}")
 
         pipeline_copy = pipeline.copy()
 
@@ -178,22 +241,28 @@ def run_cp_pipeline(conn: gw,
             measurement_dfs[object_name] = pd.concat([measurement_dfs[object_name], pd.DataFrame.from_dict(data)],
                                                      ignore_index=True)
 
-    images_table = create_annotation_table(conn, "images_table",
-                                           column_names=measurement_dfs[objects_to_image_table].columns.tolist(),
-                                           column_descriptions=measurement_dfs[objects_to_image_table].columns.tolist(),
-                                           values=[measurement_dfs[objects_to_image_table][c].values.tolist() for c in
-                                                   measurement_dfs[objects_to_image_table].columns],
-                                           types=None,
-                                           namespace="CellProfiler_v4.2.5",
-                                           table_description="images_table"
-                                           )
+    dataset_df = measurement_dfs[objects_to_image_table]
+
+    if populate_key_value_pairs:
+        for key, value in key_value_pairs.items():
+            dataset_df[key] = value
+
+    dataset_table = create_annotation_table(conn, "images_table",
+                                            column_names=dataset_df.columns.tolist(),
+                                            column_descriptions=dataset_df.columns.tolist(),
+                                            values=[dataset_df[c].values.tolist() for c in
+                                                    dataset_df.columns],
+                                            types=None,
+                                            namespace="CellProfiler_v4.2.5",
+                                            table_description="images_table"
+                                            )
     if link_to_project:
         project = dataset.getParent()
-        link_annotation(project, images_table)
-    else:
-        link_annotation(dataset, images_table)
+        link_annotation(project, dataset_table)
+    if link_to_dataset:
+        link_annotation(dataset, dataset_table)
 
-    return measurement_dfs
+    return dataset_df
 
 
 def create_roi(conn, img, shapes, name):
