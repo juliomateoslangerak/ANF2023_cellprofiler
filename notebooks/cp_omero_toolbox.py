@@ -2,6 +2,7 @@ import tempfile
 
 import omero.gateway as gw
 from omero import model
+from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import enums, LengthI, MaskI, RoiI
 from omero import grid
 from random import choice
@@ -71,6 +72,7 @@ def run_project_cp_pipeline(
         objects_to_point: iter = None,
         link_to_project: bool = True,
         link_to_dataset: bool = False,
+        link_to_image: bool = False,
         populate_key_value_pairs: bool = True,
         output_dir: tempfile.TemporaryDirectory = None,
         input_dir: tempfile.TemporaryDirectory = None
@@ -88,6 +90,7 @@ def run_project_cp_pipeline(
             objects_to_point=objects_to_point,
             link_to_project=False,
             link_to_dataset=link_to_dataset,
+            link_to_image=link_to_image,
             populate_key_value_pairs=populate_key_value_pairs,
             output_dir=output_dir,
             input_dir=input_dir
@@ -104,9 +107,9 @@ def run_project_cp_pipeline(
             values=[project_df[c].values.tolist() for c in
                     project_df.columns],
             types=None,
-            namespace="CellProfiler_v4.2.5",
+            namespace=NSBULKANNOTATIONS,
             table_description="project_table"
-       )
+        )
         link_annotation(project, project_table)
 
 
@@ -118,6 +121,7 @@ def run_dataset_cp_pipeline(
     objects_to_point: iter = None,
     link_to_project: bool = True,
     link_to_dataset: bool = True,
+    link_to_image: bool = False,
     populate_key_value_pairs: bool = True,
     output_dir: tempfile.TemporaryDirectory = None,
     input_dir: tempfile.TemporaryDirectory = None
@@ -224,15 +228,16 @@ def run_dataset_cp_pipeline(
                 data["Image"] = np.full(shape=(len(data["Number_Object_Number"])), fill_value=image_id)
                 data["Dataset"] = np.full(shape=(len(data["Number_Object_Number"])), fill_value=dataset_id)
 
-                objects_table = create_annotation_table(conn, f"{object_name}_table",
-                                                        column_names=[k for k in data.keys()],
-                                                        column_descriptions=["" for _ in data.keys()],
-                                                        values=[v.tolist() for v in data.values()],
-                                                        types=None,
-                                                        namespace="CellProfiler_v4.2.5",
-                                                        table_description=f"{object_name}_table"
-                                                        )
-                link_annotation(image, objects_table)
+                if link_to_image:
+                    objects_table = create_annotation_table(conn, f"{object_name}_table",
+                                                            column_names=[k for k in data.keys()],
+                                                            column_descriptions=["" for _ in data.keys()],
+                                                            values=[v.tolist() for v in data.values()],
+                                                            types=None,
+                                                            namespace=NSBULKANNOTATIONS,
+                                                            table_description=f"{object_name}_table"
+                                                            )
+                    link_annotation(image, objects_table)
 
             if object_name == "Image":
                 data["Image"] = np.full((1,), image_id)
@@ -253,7 +258,7 @@ def run_dataset_cp_pipeline(
                                             values=[dataset_df[c].values.tolist() for c in
                                                     dataset_df.columns],
                                             types=None,
-                                            namespace="CellProfiler_v4.2.5",
+                                            namespace=NSBULKANNOTATIONS,
                                             table_description="images_table"
                                             )
     if link_to_project:

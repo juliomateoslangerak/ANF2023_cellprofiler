@@ -11,7 +11,7 @@ dependencies:
 - python=3.8
 - pip
 - omero-py
-#- jupyter
+- jupyter
 # - jupyterlab
 - nb_conda
 - h5py
